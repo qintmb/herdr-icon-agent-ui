@@ -1,8 +1,3 @@
-<!--
-  Derived from can1357/oh-my-pi assets/icon.svg at commit ffd53ff9.
-  Source: https://github.com/can1357/oh-my-pi/blob/ffd53ff92a6f575d499730475a73460dd7cc2eea/assets/icon.svg
-  License: MIT. Modified: colors/opacity removed and geometry flattened for monochrome font use.
--->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 90">
-  <path d="M10 8H110V20H10ZM25 20H37V82H25ZM75 20H87V55H75ZM71 55H91V71H71ZM76 59H79V67H76ZM82 59H85V67H82Z"/>
+<svg viewBox="0 0 120 90">
+  <path d="M10 8H110V20H10ZM25 20H37V82H25ZM75 20H87V55H75ZM71 55H91V71H71ZM76 59H79V67H76ZM82 59H85V67H82Z" />
 </svg>

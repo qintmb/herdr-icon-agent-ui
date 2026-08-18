@@ -2,7 +2,7 @@
 
 # Herdr Icon Agent UI
 
-A Herdr v1 plugin that renders large, vertically-aligned monochrome icons for coding agents in the Herdr sidebar. Icons are rendered via a custom font (`Herdr Agent Icons Max`) with non-uniform glyph scaling that matches terminal cap-height — so icons sit flush with agent names, tabs, and workspace labels instead of appearing as tiny squares.
+A Herdr v1 plugin that renders large, vertically-aligned monochrome icons for coding agents in the Herdr sidebar. Icons are rendered via a custom font (`Herdr Agent Icons Max`) scaled to fill terminal cap-height while preserving each mark's aspect ratio — so icons sit flush with agent names, tabs, and workspace labels instead of appearing as tiny squares or stretched blobs.
 
 ![Preview](preview.png)
 
@@ -13,6 +13,8 @@ A Herdr v1 plugin that renders large, vertically-aligned monochrome icons for co
 | ![](assets/svg/claude.svg) | ![](assets/svg/codex.svg) | ![](assets/svg/opencode.svg) | ![](assets/svg/omp.svg) |
 | ![](assets/svg/cline.svg) | ![](assets/svg/mastracode.svg) | ![](assets/svg/kimi.svg) | ![](assets/svg/kilo.svg) |
 | ![](assets/svg/maki.svg) | ![](assets/svg/pi.svg) | ![](assets/svg/hermes.svg) | ![](assets/svg/cursor.svg) |
+| ![](assets/svg/copilot.svg) | ![](assets/svg/deepseek.svg) | ![](assets/svg/gemini.svg) | ![](assets/svg/gpt.svg) |
+| ![](assets/svg/qwen.svg) | | | |
 
 ## Supported agents
 
@@ -30,6 +32,11 @@ A Herdr v1 plugin that renders large, vertically-aligned monochrome icons for co
 | Pi (Buffy) | `U+E1A9` | `π` |
 | Hermes | `U+E1AA` | `☪` |
 | Cursor | `U+E1AB` | `◆` |
+| GitHub Copilot | `U+E1AC` | `⊙` |
+| DeepSeek | `U+E1AD` | `≋` |
+| Gemini | `U+E1AE` | `✦` |
+| GPT / OpenAI | `U+E1AF` | `✺` |
+| Qwen | `U+E1B0` | `Ϙ` |
 
 The plugin only writes a display token `$harness_logo` via `pane report-metadata`. It **never** changes `display_agent`, reports state labels, or touches agent lifecycle — Herdr's native colored lifecycle icon (`state_icon`) continues to work.
 
@@ -90,7 +97,7 @@ Add the following to `~/.config/ghostty/config` (or `~/Library/Application Suppo
 ```ini
 font-family = "JetBrains Mono"
 font-family = "Herdr Agent Icons Max"
-font-codepoint-map = U+E1A0-U+E1AB="Herdr Agent Icons Max"
+font-codepoint-map = U+E1A0-U+E1B0="Herdr Agent Icons Max"
 ```
 
 > Replace `JetBrains Mono` with your actual primary family. Font changes only apply to new terminal surfaces — open a new window/tab after editing.
@@ -201,21 +208,25 @@ Colors are fixed hex values — Herdr 0.8.0 cannot auto-switch per-agent colors 
 
 ### Glyph size and centering
 
-Font metrics are set to match **JetBrains Mono** (UPM 1000, advance 600, ascent 1020, descent −300) with non-uniform scaling `580×1040` — icons fill cap-height of terminal text. To change, edit constants in `tools/build_font.py`:
+Font metrics are set to match **JetBrains Mono** (UPM 1000, advance 600, ascent 1020, descent −300). Each mark is scaled **uniformly** to fit a `560×760` cell — whichever axis hits its limit first stops the scale, so the source aspect ratio is preserved and wide marks (mastracode, claude) are not flattened. Glyphs are centred on `CENTER_Y = 365`, the midpoint of JetBrains Mono cap height. To change, edit constants in `tools/build_font.py`:
 
 ```python
-GLYPH_WIDTH = 580
-GLYPH_HEIGHT = 1040
+MAX_WIDTH = 560
+MAX_HEIGHT = 760
+CENTER_Y = 365
 ```
+
+`tools/build_font.py` asserts after every build that each glyph matches its SVG aspect ratio (±0.02) and fits the cell.
 
 Rebuild the font, reinstall, and open a new terminal surface.
 
 ### Adding a new agent
 
 1. Place an SVG at `assets/svg/<name>.svg`
-2. Add a line to `font/codepoints.toml`
-3. Add entries to `PUA_LOGOS` and `TEXT_LOGOS` in `agent_icons.py`
-4. Rebuild the font, reinstall, refresh
+2. Run `python3 tools/normalize_svg.py` to strip `<title>`, fills, and wrappers — `build_font.py` only accepts `<svg>` and `<path>`
+3. Add a line to `font/codepoints.toml`
+4. Add entries to `PUA_LOGOS` and `TEXT_LOGOS` in `agent_icons.py`
+5. Rebuild the font, reinstall, refresh
 
 ## 5. Usage
 

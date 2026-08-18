@@ -16,5 +16,15 @@ Font marks in `assets/svg/` are sourced from the following projects. Marks ident
 | pi | Pi coding agent |
 | hermes | Hermes Agent |
 | cursor | Cursor (proprietary) |
+| copilot | GitHub Copilot (proprietary) |
+| deepseek | DeepSeek (proprietary) |
+| gemini | Google Gemini (proprietary) |
+| gpt | OpenAI (proprietary) |
+| qwen | Alibaba Qwen (proprietary) |
+
+Marks for `cursor`, `opencode`, `hermes`, `copilot`, `deepseek`, `gemini`,
+`gpt`, and `qwen` were taken from [lobehub/lobe-icons](https://github.com/lobehub/lobe-icons)
+(MIT) and re-normalized to bare `<path>` geometry. The MIT license covers that
+project's packaging, not the trademarks of the depicted brands.
 
 See each project's repository for license details and modifications.

@@ -1,5 +1,5 @@
 family = "Herdr Agent Icons Max"
-version = "1.0.0"
+version = "1.1.0"
 
 [glyphs]
 claude = "E1A0"
@@ -14,3 +14,8 @@ maki = "E1A8"
 pi = "E1A9"
 hermes = "E1AA"
 cursor = "E1AB"
+copilot = "E1AC"
+deepseek = "E1AD"
+gemini = "E1AE"
+gpt = "E1AF"
+qwen = "E1B0"

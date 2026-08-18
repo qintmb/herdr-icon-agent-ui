@@ -1,12 +1,5 @@
-<!--
-  Derived from tontinton/maki site/favicon-32x32.png at commit
-  18465acf19c6b870d29d827dfc12fc6a21e9d945.
-  License: MIT, Copyright (c) 2026 Tony Solomonik.
-  Modified: pixel-art cat-in-cup mark redrawn as a coarse monochrome silhouette;
-  colour, shading, facial detail, and the textured saucer were removed.
--->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <path d="M18 30L15 12L26 19C30 17 34 17 38 19L49 12L46 30C44 36 39 39 32 39C25 39 20 36 18 30Z"/>
-  <path d="M7 36H57V42H62V50H55C52 56 44 59 32 59C20 59 12 56 9 50H2V42H7ZM14 42C17 49 23 52 32 52C41 52 47 49 50 42Z"/>
-  <path d="M6 59H58L53 63H11Z"/>
+<svg viewBox="0 0 64 64">
+  <path d="M18 30L15 12L26 19C30 17 34 17 38 19L49 12L46 30C44 36 39 39 32 39C25 39 20 36 18 30Z" />
+  <path d="M7 36H57V42H62V50H55C52 56 44 59 32 59C20 59 12 56 9 50H2V42H7ZM14 42C17 49 23 52 32 52C41 52 47 49 50 42Z" />
+  <path d="M6 59H58L53 63H11Z" />
 </svg>

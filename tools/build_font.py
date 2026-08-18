@@ -3,8 +3,9 @@
 
 Glyph metrics match JetBrains Mono (UPM 1000, advance 600, ascent 1020,
 descent -300) so icons align with terminal text in the Herdr sidebar.
-A non-uniform scale (580 wide x 1040 tall) makes icons roughly cap
-height even when the source mark is squarer or wider than tall.
+Each mark is scaled uniformly to fit a 560x760 cell, so the source
+aspect ratio is preserved -- a non-uniform stretch flattens wide marks
+such as mastracode and claude.
 """
 from __future__ import annotations
 
@@ -28,23 +29,24 @@ ASCENT = 1020
 DESCENT = -300
 FONT_TIMESTAMP = 2082844800  # 1970-01-01 in OpenType's 1904 epoch.
 
-# Non-uniform scale: width fit, height stretch to match cap height.
-GLYPH_WIDTH = 580
-GLYPH_HEIGHT = 1040
+# Uniform-scale fit box. Aspect ratio is preserved; the smaller of the two
+# ratios wins so the mark never exceeds the cell in either axis.
+MAX_WIDTH = 560
+MAX_HEIGHT = 760
+# Vertical centre = middle of JetBrains Mono cap height (730), so icons sit
+# on the same optical line as adjacent text.
+CENTER_Y = 365
 
 
 def svg_glyph(path: Path):
     root = ElementTree.parse(path).getroot()
-    ns = {"svg": "http://www.w3.org/2000/svg"}
-    # Strip container elements that wrap paths.
-    for tag in ("title", "desc", "metadata", "defs", "g"):
-        for element in root.findall(f"svg:{tag}", ns):
-            root.remove(element)
-    # Remove any remaining non-path children.
-    for element in list(root):
+    # SVGPath re-reads the file, so unsupported elements cannot be stripped
+    # in-memory -- reject them instead. Run tools/normalize_svg.py to clean
+    # a downloaded mark. This also catches HTML saved under an .svg name.
+    for element in root.iter():
         tag = element.tag.rsplit("}", 1)[-1]
         if tag not in {"svg", "path"}:
-            root.remove(element)
+            raise ValueError(f"{path}: unexpected element {tag!r}")
     svg_path = SVGPath(str(path))
     bounds_pen = BoundsPen(None)
     svg_path.draw(bounds_pen)
@@ -53,15 +55,13 @@ def svg_glyph(path: Path):
     x_min, y_min, x_max, y_max = bounds_pen.bounds
     dx = x_max - x_min
     dy = y_max - y_min
-    scale_x = GLYPH_WIDTH / dx
-    scale_y = GLYPH_HEIGHT / dy
-    x_offset = (ADVANCE - dx * scale_x) / 2 - x_min * scale_x
-    # Vertical center on JetBrains Mono midpoint (ascent 1020 / descent -300).
-    y_offset = 360 + dy * scale_y / 2 + y_min * scale_y
+    scale = min(MAX_WIDTH / dx, MAX_HEIGHT / dy)
+    x_offset = (ADVANCE - dx * scale) / 2 - x_min * scale
+    y_offset = CENTER_Y + dy * scale / 2 + y_min * scale
     glyph_pen = TTGlyphPen(None)
     quadratic_pen = Cu2QuPen(glyph_pen, max_err=1.0, reverse_direction=True)
     transform_pen = TransformPen(
-        quadratic_pen, (scale_x, 0, 0, -scale_y, x_offset, y_offset)
+        quadratic_pen, (scale, 0, 0, -scale, x_offset, y_offset)
     )
     svg_path.draw(transform_pen)
     return glyph_pen.glyph()
@@ -127,6 +127,34 @@ def build(output: Path) -> None:
     print(f"Built: {output}")
 
 
+def selfcheck(path: Path) -> None:
+    """Assert every glyph keeps its SVG aspect ratio and fits the cell."""
+    from fontTools.ttLib import TTFont
+
+    font = TTFont(path)
+    glyf = font["glyf"]
+    checked = 0
+    for name in font.getGlyphOrder():
+        if name == ".notdef":
+            continue
+        glyph = glyf[name]
+        glyph.recalcBounds(glyf)
+        width = glyph.xMax - glyph.xMin
+        height = glyph.yMax - glyph.yMin
+        bounds_pen = BoundsPen(None)
+        SVGPath(str(ROOT / "assets" / "svg" / f"{name}.svg")).draw(bounds_pen)
+        sx0, sy0, sx1, sy1 = bounds_pen.bounds
+        expected = (sx1 - sx0) / (sy1 - sy0)
+        assert abs(width / height - expected) < 0.02, (
+            f"{name}: aspect {width / height:.3f} != svg {expected:.3f}"
+        )
+        assert width <= MAX_WIDTH + 8 and height <= MAX_HEIGHT + 8, (
+            f"{name}: {width}x{height} overflows {MAX_WIDTH}x{MAX_HEIGHT}"
+        )
+        checked += 1
+    print(f"selfcheck OK ({checked} glyphs)")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -136,6 +164,7 @@ def main() -> int:
     )
     args = parser.parse_args()
     build(args.output)
+    selfcheck(args.output)
     return 0
 
 

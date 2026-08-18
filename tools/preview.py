@@ -24,6 +24,11 @@ AGENT_NAMES = {
     "pi": "Pi",
     "hermes": "Hermes",
     "cursor": "Cursor",
+    "copilot": "Copilot",
+    "deepseek": "DeepSeek",
+    "gemini": "Gemini",
+    "gpt": "GPT",
+    "qwen": "Qwen",
 }
 
 

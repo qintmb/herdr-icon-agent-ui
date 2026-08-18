@@ -1,16 +1,9 @@
-<!--
-  Derived from Kilo-Org/kilocode packages/kilo-docs/public/favicon/favicon.svg
-  at commit 90a93a7aa25950d5894fa67f6e4e6545ef55017c.
-  License: MIT, Copyright (c) 2026 Kilo Code and (c) 2025 opencode.
-  Modified: colour background removed; rectangles and polygons flattened to
-  monochrome paths while retaining the coarse 32-pixel brand geometry.
--->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <path d="M0 0H32V3H0ZM0 29H32V32H0ZM0 3H3V29H0ZM29 3H32V29H29Z"/>
-  <path d="M23 26V24H26V19L24 17H20V19H17V24L19 26ZM20 20H23V23H20Z"/>
-  <path d="M12 17H15V20H12Z"/>
-  <path d="M26 12H23V9L20 6H17V9H20V12H17V15H26Z"/>
-  <path d="M15 26V23H9V17H6V23.1875L8.8125 26Z"/>
-  <path d="M12 6H15V9H12Z"/>
-  <path d="M9 12H12V15H15V12L12 9H9V6H6V15H9Z"/>
+<svg viewBox="0 0 32 32">
+  <path d="M0 0H32V3H0ZM0 29H32V32H0ZM0 3H3V29H0ZM29 3H32V29H29Z" />
+  <path d="M23 26V24H26V19L24 17H20V19H17V24L19 26ZM20 20H23V23H20Z" />
+  <path d="M12 17H15V20H12Z" />
+  <path d="M26 12H23V9L20 6H17V9H20V12H17V15H26Z" />
+  <path d="M15 26V23H9V17H6V23.1875L8.8125 26Z" />
+  <path d="M12 6H15V9H12Z" />
+  <path d="M9 12H12V15H15V12L12 9H9V6H6V15H9Z" />
 </svg>

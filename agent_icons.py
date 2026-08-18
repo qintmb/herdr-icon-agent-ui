@@ -2,7 +2,7 @@
 """Apply display-only icons to Herdr agent names.
 
 Supports: claude, codex, opencode, omp, cline, mastracode, kimi, kilo,
-maki, pi, hermes, cursor.
+maki, pi, hermes, cursor, copilot, deepseek, gemini, gpt, qwen.
 
 Icon variant system:
 - font: Private Use Area codepoints (requires Herdr Agent Icons Max font)
@@ -38,6 +38,11 @@ PUA_LOGOS: dict[str, str] = {
     "pi": "\ue1a9",
     "hermes": "\ue1aa",
     "cursor": "\ue1ab",
+    "copilot": "\ue1ac",
+    "deepseek": "\ue1ad",
+    "gemini": "\ue1ae",
+    "gpt": "\ue1af",
+    "qwen": "\ue1b0",
 }
 
 TEXT_LOGOS: dict[str, str] = {
@@ -53,6 +58,11 @@ TEXT_LOGOS: dict[str, str] = {
     "pi": "\u03c0",
     "hermes": "\u262a",
     "cursor": "\u25c6",
+    "copilot": "\u2299",
+    "deepseek": "\u224b",
+    "gemini": "\u2726",
+    "gpt": "\u273a",
+    "qwen": "\u03d8",
 }
 
 VARIANTS = ("auto", "font", "text", "none")
