@@ -1,0 +1,16 @@
+family = "Herdr Agent Icons Max"
+version = "1.0.0"
+
+[glyphs]
+claude = "E1A0"
+codex = "E1A1"
+opencode = "E1A2"
+omp = "E1A3"
+cline = "E1A4"
+mastracode = "E1A5"
+kimi = "E1A6"
+kilo = "E1A7"
+maki = "E1A8"
+pi = "E1A9"
+hermes = "E1AA"
+cursor = "E1AB"

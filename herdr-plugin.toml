@@ -1,0 +1,20 @@
+id = "qintmb.herdr-icon-agent-ui"
+name = "Agent Icon UI"
+version = "1.0.0"
+min_herdr_version = "0.8.0"
+description = "Large Unicode harness logos for Herdr sidebar — claude, codex, opencode, omp, cline, mastracode, kimi, kilo, maki, pi, hermes, cursor. Matches terminal font metrics so icons align with agent names."
+platforms = ["linux", "macos", "windows"]
+
+[[startup]]
+command = ["python3", "agent_icons.py"]
+
+[[events]]
+on = "pane.agent_detected"
+command = ["python3", "agent_icons.py"]
+
+[[actions]]
+id = "refresh"
+title = "Agent icons: refresh"
+description = "Reapply icon variants to all current panes."
+contexts = ["global"]
+command = ["python3", "agent_icons.py"]

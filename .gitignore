@@ -1,0 +1,5 @@
+# Ignore font build venv only
+.venv-font/
+__pycache__/
+*.pyc
+.DS_Store
