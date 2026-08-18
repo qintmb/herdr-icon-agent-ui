@@ -1,6 +1,12 @@
+<div align="center">
+
 # Herdr Icon Agent UI
 
 A Herdr v1 plugin that renders large, vertically-aligned monochrome icons for coding agents in the Herdr sidebar. Icons are rendered via a custom font (`Herdr Agent Icons Max`) with non-uniform glyph scaling that matches terminal cap-height — so icons sit flush with agent names, tabs, and workspace labels instead of appearing as tiny squares.
+
+![Preview](preview.png)
+
+</div>
 
 | | | | |
 |---|---|---|---|
