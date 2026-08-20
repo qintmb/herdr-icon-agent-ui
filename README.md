@@ -38,10 +38,10 @@ A Herdr v1 plugin that renders large, vertically-aligned monochrome icons for co
 | GPT / OpenAI | `U+E1AF` | `✺` |
 | Qwen | `U+E1B0` | `Ϙ` |
 
-The plugin writes two display tokens via `pane report-metadata`:
+The plugin writes display tokens via `pane report-metadata`:
 
 - `$harness_logo` — the harness mark (static, per detected agent).
-- `$agent_state` — an **animated lifecycle-state glyph**: orange braille spinner while `working`, green `✓` on `done`, red `■` on `blocked`, dim `◦` when `idle`, dim `?` when `unknown`. Coloured with inline ANSI (no emoji).
+- `$state_working` / `$state_done` / `$state_blocked` / `$state_idle` / `$state_unknown` — **animated lifecycle-state glyphs**. Exactly one is set per pane (the rest cleared): braille spinner while `working`, `✓` on `done`, `■` on `blocked`, `◦` when `idle`, `?` when `unknown`. Bare glyphs (no emoji, no ANSI) — colour comes from each cell's `fg` in the sidebar row.
 
 It **never** changes `display_agent`, reports state labels, or touches agent lifecycle — Herdr's own detection drives everything; the plugin only mirrors the reported status into a styled glyph. Herdr's native `state_icon` still works and can be kept alongside or dropped in favour of `$agent_state`.
 
@@ -115,21 +115,18 @@ ghostty +list-fonts | grep -F 'Herdr Agent Icons Max'
 
 ### 2.3 Herdr sidebar configuration
 
-Add the tokens to the agent rows in `~/.config/herdr/config.toml`. Recommended per-agent layout (`$agent_state` = animated lifecycle glyph, `$harness_logo` = brand mark, coloured per harness):
+Add the tokens to the agent rows in `~/.config/herdr/config.toml`. State glyphs are exposed as **one token per state** (only one is ever set at a time; the rest are cleared and vanish), so each carries its own `fg`. Recommended per-agent layout:
 
 ```toml
 [ui.sidebar.agents.rows_by_agent]
-claude   = [["workspace"], [{ token = "$agent_state" }, { token = "$harness_logo", fg = "#d97757", bold = false }, "agent"], ["terminal_title_stripped"]]
-codex    = [["workspace"], [{ token = "$agent_state" }, { token = "$harness_logo", fg = "#ffffff", bold = false }, "agent"], ["terminal_title_stripped"]]
-opencode = [["workspace"], [{ token = "$agent_state" }, { token = "$harness_logo", fg = "#ffffff", bold = false }, "agent"], ["terminal_title_stripped"]]
-omp      = [["workspace"], [{ token = "$agent_state" }, { token = "$harness_logo", fg = "#f97316", bold = false }, "agent"], ["terminal_title_stripped"]]
-pi       = [["workspace"], [{ token = "$agent_state" }, { token = "$harness_logo", fg = "#8be9fd", bold = false }, "agent"], ["terminal_title_stripped"]]
-hermes   = [["workspace"], [{ token = "$agent_state" }, { token = "$harness_logo", fg = "#f1fa8c", bold = false }, "agent"], ["terminal_title_stripped"]]
+claude   = [["workspace"], [{ token = "$state_working", fg = "#d97757" }, { token = "$state_done", fg = "#a6da95" }, { token = "$state_blocked", fg = "#ed8796" }, { token = "$state_idle", fg = "#6e738d" }, { token = "$state_unknown", fg = "#6e738d" }, { token = "$harness_logo", fg = "#d97757", bold = false }, "agent"], ["terminal_title_stripped"]]
+codex    = [["workspace"], [{ token = "$state_working", fg = "#d97757" }, { token = "$state_done", fg = "#a6da95" }, { token = "$state_blocked", fg = "#ed8796" }, { token = "$state_idle", fg = "#6e738d" }, { token = "$state_unknown", fg = "#6e738d" }, { token = "$harness_logo", fg = "#ffffff", bold = false }, "agent"], ["terminal_title_stripped"]]
+# opencode / omp / pi / hermes: same state cells, change only $harness_logo fg
 ```
 
-`$agent_state` carries its own colour (orange/green/red) via inline ANSI, so leave it unstyled — an `fg` on that cell would override the state colour. Keep `state_icon` too if you want Herdr's native dot next to the animated glyph.
+Every row lists all five `$state_*` cells; the plugin lights exactly the one matching the pane's current status. Colour lives in the `fg` here (Herdr renders token values as plain text, so ANSI in the value would show literally — the plugin emits bare glyphs).
 
-> **Braille spinner needs glyph coverage.** The working frames use braille (`U+2800–U+28FF`); `✓`/`■`/`◦` are common Unicode. Your primary terminal font renders these — no extra font needed. Only `$harness_logo` (PUA `U+E1A0–U+E1B0`) needs the icon font from §2.1.
+> **Glyph coverage.** Working frames use braille (`U+2800–U+28FF`); `✓`/`■`/`◦`/`?` are common Unicode. Your primary terminal font renders these — no extra font needed. Only `$harness_logo` (PUA `U+E1A0–U+E1B0`) needs the icon font from §2.1.
 
 Then reload:
 
@@ -215,27 +212,27 @@ pi = [["state_icon", { token = "$harness_logo", fg = "#ffffff" }, "agent"], ["wo
 hermes = [["state_icon", { token = "$harness_logo", fg = "#ffffff" }, "agent"], ["workspace", "tab"]]
 ```
 
-Colors are fixed hex values — Herdr 0.8.0 cannot auto-switch per-agent colors with the theme. Choose values with sufficient contrast, or omit `fg` for fully theme-safe styling. Do not set `fg` on the `$agent_state` cell — it is self-coloured by state.
+Colors are fixed hex values — Herdr 0.8.0 cannot auto-switch per-agent colors with the theme. Choose values with sufficient contrast, or omit `fg` for fully theme-safe styling.
 
-### Lifecycle state glyphs (`$agent_state`)
+### Lifecycle state glyphs
 
-`agent_state.py` mirrors each pane's reported `agent_status` into the `$agent_state` token:
+`agent_state.py` mirrors each pane's reported `agent_status` into a per-state token (`$state_working`, `$state_done`, `$state_blocked`, `$state_idle`, `$state_unknown`) — exactly one is set, the others cleared. Colour lives in each cell's `fg`:
 
-| State | Glyph | Color |
-| --- | --- | --- |
-| working | braille spinner (8 frames, animated) | orange `#d97757` |
-| done | `✓` | green `#a6da95` |
-| blocked | `■` | red `#ed8796` |
-| idle | `◦` | dim |
-| unknown | `?` | dim |
+| State | Glyph | Token | Suggested `fg` |
+| --- | --- | --- | --- |
+| working | braille spinner (8 frames, animated) | `$state_working` | orange `#d97757` |
+| done | `✓` | `$state_done` | green `#a6da95` |
+| blocked | `■` | `$state_blocked` | red `#ed8796` |
+| idle | `◦` | `$state_idle` | dim `#6e738d` |
+| unknown | `?` | `$state_unknown` | dim `#6e738d` |
 
-Herdr never animates a static token, so a short-lived background **animator** rewrites the working frame every 150 ms. It is spawned on demand (startup, `pane.agent_detected`, `pane.agent_status_changed`, or the `state-start` action), is the only writer of the token, and **self-exits ~1.8 s after no agent is working** — so it costs nothing on an idle machine. Stop it manually with the `state-stop` action or:
+Herdr never animates a static token, so a short-lived background **animator** rewrites the working frame every 150 ms. It is spawned on demand (startup, `pane.agent_detected`, `pane.agent_status_changed`, or the `state-start` action), is the only writer of these tokens, and **self-exits ~1.8 s after no agent is working** — so it costs nothing on an idle machine. Stop it manually with the `state-stop` action or:
 
 ```sh
 python3 agent_state.py --stop
 ```
 
-Tune frames/colors/timing via constants at the top of `agent_state.py` (`FRAMES`, `_ORANGE`/`_GREEN`/`_RED`, `POLL_SECONDS`, `IDLE_GRACE_TICKS`).
+Tune frames/timing via constants at the top of `agent_state.py` (`FRAMES`, `STATIC_GLYPH`, `POLL_SECONDS`, `IDLE_GRACE_TICKS`); colours are set in the sidebar row `fg`.
 
 ### Glyph size and centering
 

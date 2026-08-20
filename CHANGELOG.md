@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2026-08-20
+
+### Fixed
+- State glyphs showed raw ANSI text (`[38;2;217;…m`) in the sidebar — Herdr renders token values as plain text. Replaced the single ANSI-coloured `$agent_state` token with **one bare-glyph token per state** (`$state_working`, `$state_done`, `$state_blocked`, `$state_idle`, `$state_unknown`); colour now comes from each cell's `fg` in `rows_by_agent`. Only one token is set per pane, the rest cleared.
+
 ## [1.2.0] - 2026-08-20
 
 ### Added

@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 """Animated lifecycle state glyphs for Herdr agent panes.
 
-Writes a display-only token ``$agent_state`` per pane, coloured with inline
-ANSI (Herdr preserves token bytes verbatim). No emoji — geometric/braille marks:
+The Herdr sidebar renders token values as plain text (ANSI escapes are shown
+literally), so colour comes from per-cell ``fg`` in the sidebar row, not from
+the token. We therefore expose one token *per state* and light exactly one at a
+time; the others are cleared so their cells vanish. Each state token gets its
+own fixed colour in ``rows_by_agent`` (see README). No emoji — braille + marks:
 
-    working  → orange braille spinner (animated)
-    done     → green check   ✓
-    blocked  → red square     ■  (stop/block)
-    idle     → dim ring       ◦
-    unknown  → dim question   ?
+    working  → braille spinner (animated)  → $state_working  (colour orange)
+    done     → check   ✓                   → $state_done     (colour green)
+    blocked  → square  ■  (stop/block)     → $state_blocked  (colour red)
+    idle     → ring    ◦                   → $state_idle     (dim)
+    unknown  → question ?                  → $state_unknown  (dim)
 
 Herdr never cycles a static token, so a short-lived background animator
 (``--animate``) rewrites the working frame on a timer. It is the *sole* writer
-of the token, polls only while an agent is working, and self-exits after a
-grace period so it never burns CPU on an idle machine. Any event or startup
-invocation just (re)spawns it on demand.
+of these tokens, and self-exits after a grace period with no working agent so
+it never burns CPU on an idle machine. Any event/startup invocation just
+(re)spawns it on demand.
 """
 from __future__ import annotations
 
@@ -27,24 +30,20 @@ import time
 from pathlib import Path
 from typing import Any
 
-TOKEN_NAME = "agent_state"
+# One token per state — coloured individually in the sidebar row.
+TOKENS = {
+    "working": "state_working",
+    "done": "state_done",
+    "blocked": "state_blocked",
+    "idle": "state_idle",
+    "unknown": "state_unknown",
+}
+ALL_TOKENS = tuple(TOKENS.values())
+
 FRAMES = ("⣷", "⣯", "⣟", "⡿", "⢿", "⣻", "⣽", "⣾")
+STATIC_GLYPH = {"done": "✓", "blocked": "■", "idle": "◦", "unknown": "?"}
 POLL_SECONDS = 0.15
 IDLE_GRACE_TICKS = 12  # ~1.8s of no working agents, then the animator exits
-
-# ANSI truecolour wrappers (fg only; sidebar bg stays theme-controlled).
-_ORANGE = "\033[38;2;217;119;87m"   # #d97757
-_RED = "\033[38;2;237;135;150m"     # #ed8796
-_GREEN = "\033[38;2;166;218;149m"   # #a6da95
-_DIM = "\033[2m"
-_RESET = "\033[0m"
-
-STATIC = {
-    "done": f"{_GREEN}✓{_RESET}",
-    "blocked": f"{_RED}■{_RESET}",
-    "idle": f"{_DIM}◦{_RESET}",
-    "unknown": f"{_DIM}?{_RESET}",
-}
 
 
 def _herdr() -> str:
@@ -89,17 +88,29 @@ def working_agents() -> list[dict[str, str]]:
 
 
 def glyph_for(status: str, frame: int) -> str | None:
+    """Plain glyph for a status (no ANSI). None if the status is unmapped."""
     if status == "working":
-        return f"{_ORANGE}{FRAMES[frame % len(FRAMES)]}{_RESET}"
-    return STATIC.get(status)  # None → clear
+        return FRAMES[frame % len(FRAMES)]
+    return STATIC_GLYPH.get(status)
 
 
-def write_token(source: str, pane: str, value: str | None) -> None:
+def write_state(source: str, pane: str, status: str, frame: int) -> None:
+    """Set the one matching state token, clear the rest, in a single call."""
+    active = TOKENS.get(status)
+    glyph = glyph_for(status, frame)
     args = ["pane", "report-metadata", pane, "--source", source]
-    if value is None:
-        args += ["--clear-token", TOKEN_NAME]
-    else:
-        args += ["--token", f"{TOKEN_NAME}={value}"]
+    for name in ALL_TOKENS:
+        if name == active and glyph is not None:
+            args += ["--token", f"{name}={glyph}"]
+        else:
+            args += ["--clear-token", name]
+    run_herdr(*args)
+
+
+def clear_state(source: str, pane: str) -> None:
+    args = ["pane", "report-metadata", pane, "--source", source]
+    for name in ALL_TOKENS:
+        args += ["--clear-token", name]
     run_herdr(*args)
 
 
@@ -150,16 +161,17 @@ def animate(source: str) -> int:
             live = {a["pane"] for a in agents}
             any_working = False
             for a in agents:
-                g = glyph_for(a["status"], frame)
-                key = f"{a['pane']}:{g}"
+                status = a["status"]
+                g = glyph_for(status, frame)
+                key = f"{status}:{g}"
                 if last.get(a["pane"]) != key:
-                    write_token(source, a["pane"], g)
+                    write_state(source, a["pane"], status, frame)
                     last[a["pane"]] = key
-                if a["status"] == "working":
+                if status == "working":
                     any_working = True
             # clear panes whose agent vanished
             for pane in [p for p in last if p not in live]:
-                write_token(source, pane, None)
+                clear_state(source, pane)
                 last.pop(pane, None)
 
             idle_ticks = 0 if any_working else idle_ticks + 1
