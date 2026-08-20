@@ -6,7 +6,7 @@ A Herdr v1 plugin for the sidebar: large, vertically-aligned monochrome **harnes
 
 <div align="center">
 
-<video src="./preview.mp4" width="720" controls></video>
+<video src="preview.mp4" width="720" controls></video>
 
 </div>
 
