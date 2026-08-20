@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2026-08-20
+
+### Added
+- **Dot-free line + LED state marks** (à la [lfsmoura/led-agent-status](https://github.com/lfsmoura/led-agent-status)). Each `$state_*` token now holds the whole line `⟨glyph⟩ ⟨logo⟩ ⟨name⟩`, so Herdr's `·` cell separator no longer appears between spinner, logo, and name. `blocked`/`idle`/`unknown` use a full-size LED `⬤`; `done` a `✓`; `working` the braille spinner.
+- **"done" hold**: the animator detects `working → idle/done` and holds the green `✓` for `DONE_HOLD_SECONDS` (default 6 s) before falling to idle — Herdr otherwise collapses `done` into `idle` instantly, so a finished turn never showed done.
+
+### Changed
+- Line is coloured per status via the row `fg` (one colour per line), trading per-agent brand logo colour for a clean dot-free line. Recommended `rows_by_agent` updated accordingly.
+
 ## [1.2.1] - 2026-08-20
 
 ### Fixed

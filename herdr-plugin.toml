@@ -1,6 +1,6 @@
 id = "qintmb.herdr-icon-agent-ui"
 name = "Agent Icon UI"
-version = "1.2.1"
+version = "1.3.0"
 min_herdr_version = "0.8.0"
 description = "Large Unicode harness logos + animated lifecycle-state glyphs (working spinner, done, blocked) for the Herdr sidebar — claude, codex, opencode, omp, cline, mastracode, kimi, kilo, maki, pi, hermes, cursor, copilot, deepseek, gemini, gpt, qwen. Matches terminal font metrics so icons align with agent names."
 platforms = ["linux", "macos", "windows"]
