@@ -4,17 +4,9 @@
 
 A Herdr v1 plugin for the sidebar: large, vertically-aligned monochrome **harness logos** (custom font, scaled to cap-height and aspect-correct) plus an **animated lifecycle-state line** — orange braille spinner while working, held green `✓` on done, red/dim LED `⬤` for blocked/idle — rendered dot-free so the state glyph, logo, and agent name sit flush together.
 
-https://github.com/qintmb/herdr-icon-agent-ui/releases/download/v1.3.0/preview.mov
+<video src="https://github.com/qintmb/herdr-icon-agent-ui/releases/download/v1.3.0/preview.mp4" autoplay loop muted playsinline width="360"></video>
 
 </div>
-
-| | | | |
-|---|---|---|---|
-| ![](assets/svg/claude.svg) | ![](assets/svg/codex.svg) | ![](assets/svg/opencode.svg) | ![](assets/svg/omp.svg) |
-| ![](assets/svg/cline.svg) | ![](assets/svg/mastracode.svg) | ![](assets/svg/kimi.svg) | ![](assets/svg/kilo.svg) |
-| ![](assets/svg/maki.svg) | ![](assets/svg/pi.svg) | ![](assets/svg/hermes.svg) | ![](assets/svg/cursor.svg) |
-| ![](assets/svg/copilot.svg) | ![](assets/svg/deepseek.svg) | ![](assets/svg/gemini.svg) | ![](assets/svg/gpt.svg) |
-| ![](assets/svg/qwen.svg) | | | |
 
 ## Supported agents
 
