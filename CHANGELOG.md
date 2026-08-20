@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-08-20
+
+### Added
+- `agent_state.py` — animated lifecycle-state glyph via the `$agent_state` token: orange braille spinner while `working`, green `✓` on `done`, red `■` on `blocked`, dim `◦`/`?` for `idle`/`unknown`. Coloured with inline ANSI, no emoji.
+- Background animator (150 ms frame cadence) spawned on demand and self-terminating ~1.8 s after no agent is working, so it costs nothing on an idle machine. Single-writer PID lock; `state-stop` action / `--stop` to halt.
+- Manifest: `pane.agent_status_changed` event, extra `[[startup]]`/`[[events]]` pass, and `state-start`/`state-stop` actions.
+- `tests/test_agent_state.py` — glyph mapping, frame cycling, no-emoji assertions.
+- README: recommended `rows_by_agent` layout with `$agent_state` + `$harness_logo`, and a lifecycle-state reference table.
+
 ## [1.1.0] - 2026-08-18
 
 ### Added

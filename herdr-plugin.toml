@@ -1,16 +1,27 @@
 id = "qintmb.herdr-icon-agent-ui"
 name = "Agent Icon UI"
-version = "1.1.0"
+version = "1.2.0"
 min_herdr_version = "0.8.0"
-description = "Large Unicode harness logos for Herdr sidebar — claude, codex, opencode, omp, cline, mastracode, kimi, kilo, maki, pi, hermes, cursor, copilot, deepseek, gemini, gpt, qwen. Matches terminal font metrics so icons align with agent names."
+description = "Large Unicode harness logos + animated lifecycle-state glyphs (working spinner, done, blocked) for the Herdr sidebar — claude, codex, opencode, omp, cline, mastracode, kimi, kilo, maki, pi, hermes, cursor, copilot, deepseek, gemini, gpt, qwen. Matches terminal font metrics so icons align with agent names."
 platforms = ["linux", "macos", "windows"]
 
 [[startup]]
 command = ["python3", "agent_icons.py"]
 
+[[startup]]
+command = ["python3", "agent_state.py"]
+
 [[events]]
 on = "pane.agent_detected"
 command = ["python3", "agent_icons.py"]
+
+[[events]]
+on = "pane.agent_detected"
+command = ["python3", "agent_state.py"]
+
+[[events]]
+on = "pane.agent_status_changed"
+command = ["python3", "agent_state.py"]
 
 [[actions]]
 id = "refresh"
@@ -18,3 +29,17 @@ title = "Agent icons: refresh"
 description = "Reapply icon variants to all current panes."
 contexts = ["global"]
 command = ["python3", "agent_icons.py"]
+
+[[actions]]
+id = "state-start"
+title = "Agent state: start animator"
+description = "Start the lifecycle-state glyph animator."
+contexts = ["global"]
+command = ["python3", "agent_state.py"]
+
+[[actions]]
+id = "state-stop"
+title = "Agent state: stop animator"
+description = "Stop the lifecycle-state glyph animator and clear its tokens."
+contexts = ["global"]
+command = ["python3", "agent_state.py", "--stop"]
