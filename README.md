@@ -4,7 +4,11 @@
 
 A Herdr v1 plugin for the sidebar: large, vertically-aligned monochrome **harness logos** (custom font, scaled to cap-height and aspect-correct) plus an **animated lifecycle-state line** — orange braille spinner while working, held green `✓` on done, red/dim LED `⬤` for blocked/idle — rendered dot-free so the state glyph, logo, and agent name sit flush together.
 
-<video src="./preview.mp4" autoplay loop muted playsinline width="360"></video>
+<div align="center">
+
+<video src="./preview.mp4" width="720" controls></video>
+
+</div>
 
 </div>
 
