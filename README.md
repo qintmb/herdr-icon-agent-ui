@@ -3,14 +3,7 @@
 # Herdr Icon Agent UI
 
 A Herdr v1 plugin for the sidebar: large, vertically-aligned monochrome **harness logos** (custom font, scaled to cap-height and aspect-correct) plus an **animated lifecycle-state line** — orange braille spinner while working, held green `✓` on done, red/dim LED `⬤` for blocked/idle — rendered dot-free so the state glyph, logo, and agent name sit flush together.
-
-<div align="center">
-
-<video src="https://github.com/user-attachments/assets/d1fca5fd-0ece-435c-a807-e1ce89ea9d45" width="720" controls></video>
-
-
-</div>
-
+<video src="https://github.com/user-attachments/assets/d1fca5fd-0ece-435c-a807-e1ce89ea9d45" autoplay loop muted playsinline></video>
 </div>
 
 ## Supported agents
